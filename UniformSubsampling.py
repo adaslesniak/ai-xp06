@@ -4,13 +4,13 @@ import random
 
 class UniformSubsampler:
 
-    def __init__(self, data:pd.DataFrame):    
-        self._original_features = data.columns.tolist()
-        self._inflated_features = data.columns.tolist()
+    def __init__(self, data:np.ndarray):    
         self._org_nr_of_features = data.shape[1]
+        self._original_features = list(range(self._org_nr_of_features))
+        self._inflated_features = list(range(self._org_nr_of_features))
         
 
-    def _sample_with_uniform_distribution(self, how_many_to_select):
+    def _sample_with_uniform_distribution(self, how_many_to_select:int) -> list:
         features_subset = []
         while len(features_subset) < how_many_to_select:
             feature = random.choice(self._inflated_features)
@@ -22,7 +22,7 @@ class UniformSubsampler:
             self._inflated_features.remove(feature) # reduce relative chances of selected feature to be reselected again
         return features_subset
 
-    def subsets_with_uniform_distribution(self, nr_of_subsets=100, features_per_subset = None):
+    def subsets_with_uniform_distribution(self, nr_of_subsets=100, features_per_subset = None) -> list:
         if features_per_subset is None:
             features_per_subset = int(np.ceil(np.sqrt(self._org_nr_of_features)))
         subsets = []

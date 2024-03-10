@@ -2,6 +2,7 @@ import numpy as np
 from scipy import stats
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils import resample
+from UniformSubsampling import UniformSubsampler
 
 class ARandomForest:
     def __init__(self, n_estimators=100, random_state=42, max_features='sqrt'):
@@ -12,22 +13,21 @@ class ARandomForest:
 
     def fit(self, X, y):
         n_samples, n_features = X.shape
+        if self.max_features == 'sqrt':
+            n_features_to_use = int(np.sqrt(n_features))
+        else:
+            n_features_to_use = self.max_features  # or any other criteria
 
-        for _ in range(self.n_estimators):
+        feature_sampler = UniformSubsampler(X)
+        self.feature_indices = feature_sampler.subsets_with_uniform_distribution(self.n_estimators, n_features_to_use)
+
+        for i in range(self.n_estimators):
             # Bootstrap sample
             sample_X, sample_y = resample(X, y)
             
-            # Select features based on your uniform distribution algorithm
-            if self.max_features == 'sqrt':
-                n_features_to_use = int(np.sqrt(n_features))
-            else:
-                n_features_to_use = self.max_features  # or any other criteria
-            features_idx = np.random.choice(range(n_features), n_features_to_use, replace=False)
-            self.feature_indices.append(features_idx)
-            
             # Train Decision Tree on sampled data with selected features
             tree = DecisionTreeClassifier()
-            tree.fit(sample_X[:, features_idx], sample_y)
+            tree.fit(sample_X[:, self.feature_indices[i]], sample_y)
             self.trees.append(tree)
 
     def predict(self, X):
