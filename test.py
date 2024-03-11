@@ -22,8 +22,9 @@ def evaluate(model, title, predicates, labels):
 def compare(data_name, predicates, labels):
     nest = 25
     rnd = 66
-    random_forest_model = RandomForestClassifier(n_estimators=nest, random_state=rnd)
-    random_forest_uniform = ARandomForest(n_estimators=nest, random_state=rnd)
+    depth = 5
+    random_forest_model = RandomForestClassifier(n_estimators=nest, random_state=rnd, max_depth=depth)
+    random_forest_uniform = ARandomForest(n_estimators=nest, random_state=rnd, max_depth=depth)
     naive_forest = NaiveRandomForest(n_estimators=nest, random_state=rnd)
     print("==========", data_name, "==========")
     evaluate(random_forest_model, "classic", predicates, labels)

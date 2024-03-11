@@ -6,9 +6,10 @@ from UniformSubsampling import UniformSubsampler
 import random
 
 class ARandomForest:
-    def __init__(self, n_estimators=100, random_state=42, max_features='sqrt'):
+    def __init__(self, n_estimators=100, random_state=42, max_depth=None, max_features='sqrt'):
         self.n_estimators = n_estimators
         self.random_state = random_state
+        self.max_depth = max_depth
         random.seed = self.random_state
         np.random.seed = self.random_state
         self.max_features = max_features
@@ -27,7 +28,7 @@ class ARandomForest:
         for i in range(self.n_estimators):
             sample_X, sample_y = resample(X, y)
             selected_features = self.feature_indices[i]
-            tree = DecisionTreeClassifier()
+            tree = DecisionTreeClassifier(max_depth=self.max_depth)
             tree.fit(sample_X[:, selected_features], sample_y)
             self.trees.append(tree)
 
@@ -40,7 +41,7 @@ class ARandomForest:
 
     def get_params(self, deep=True):
         # Return a dictionary of parameters, similar to scikit-learn's get_params
-        return {"n_estimators": self.n_estimators, "random_state": self.random_state}
+        return {"n_estimators": self.n_estimators, "random_state": self.random_state, "max_depth":self.max_depth}
 
 
     def set_params(self, **parameters):
