@@ -7,9 +7,11 @@ from UniformSubsampling import UniformSubsampler
 class ARandomForest:
     def __init__(self, n_estimators=100, random_state=42, max_features='sqrt'):
         self.n_estimators = n_estimators
+        self.random_state = random_state
         self.max_features = max_features
         self.trees = []
         self.feature_indices = []  # Store feature indices for each tree
+
 
     def fit(self, X, y):
         n_samples, n_features = X.shape
@@ -30,7 +32,19 @@ class ARandomForest:
             tree.fit(sample_X[:, self.feature_indices[i]], sample_y)
             self.trees.append(tree)
 
+
     def predict(self, X):
         predictions = np.array([tree.predict(X[:, features_idx]) for tree, features_idx in zip(self.trees, self.feature_indices)])
         final_predictions = stats.mode(predictions, axis=0).mode
         return np.squeeze(final_predictions)
+    
+
+    def get_params(self, deep=True):
+        # Return a dictionary of parameters, similar to scikit-learn's get_params
+        return {"n_estimators": self.n_estimators, "random_state": self.random_state}
+
+
+    def set_params(self, **parameters):
+        for parameter, value in parameters.items():
+            setattr(self, parameter, value)
+        return self
