@@ -5,7 +5,7 @@ from sklearn.utils import resample
 from UniformSubsampling import UniformSubsampler
 import random
 
-class ARandomForest:
+class NaiveRandomForest:
     def __init__(self, n_estimators=100, random_state=42, max_features='sqrt'):
         self.n_estimators = n_estimators
         self.random_state = random_state
@@ -17,17 +17,21 @@ class ARandomForest:
 
 
     def fit(self, X, y):
-        _, n_features = X.shape
+        n_samples, n_features = X.shape
         if self.max_features == 'sqrt':
             n_features_to_use = int(np.sqrt(n_features))
         else:
             n_features_to_use = self.max_features  # or any other criteria
+
         feature_sampler = UniformSubsampler(X)
         self.feature_indices = feature_sampler.subsets_with_uniform_distribution(self.n_estimators, n_features_to_use)
+
         for i in range(self.n_estimators):
+            # Bootstrap sample
             sample_X, sample_y = resample(X, y)
-            selected_features = self.feature_indices[i]
+            # Train Decision Tree on sampled data with selected features
             tree = DecisionTreeClassifier()
+            selected_features = np.random.choice(range(n_features), n_features_to_use, replace=False)
             tree.fit(sample_X[:, selected_features], sample_y)
             self.trees.append(tree)
 

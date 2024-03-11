@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from ARandomForest import ARandomForest
+from NaiveRandomForest import NaiveRandomForest
 import pandas as pd
 
 
@@ -19,13 +20,15 @@ def evaluate(model, title, predicates, labels):
 
 
 def compare(data_name, predicates, labels):
-    nest = 50
-    rnd = 44
+    nest = 25
+    rnd = 66
     random_forest_model = RandomForestClassifier(n_estimators=nest, random_state=rnd)
     random_forest_uniform = ARandomForest(n_estimators=nest, random_state=rnd)
+    naive_forest = NaiveRandomForest(n_estimators=nest, random_state=rnd)
     print("==========", data_name, "==========")
     evaluate(random_forest_model, "classic", predicates, labels)
     evaluate(random_forest_uniform, "uniform", predicates, labels)
+    evaluate(naive_forest, "naive  ", predicates, labels)
 
 
 #iris = load_iris()
