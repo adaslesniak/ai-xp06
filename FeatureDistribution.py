@@ -59,6 +59,7 @@ def iris():
     iris = load_iris()
     return generate_data(iris.data, iris.target, "IRIS")
 
+# https://archive.ics.uci.edu/dataset/186/wine+quality
 def wine_quality():
     wine = pd.read_csv('wine/winequality-red.csv', delimiter=';')
     wine_features = wine.drop('quality', axis=1).values
@@ -69,6 +70,7 @@ def breast_cancer():
     bc = load_breast_cancer()
     return generate_data(bc.data, bc.target, "CANCER")
 
+# https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones
 def human_activity():
     human_activity = pd.read_csv("har_data.csv")
     har_predictors = human_activity.drop(['activity', 'subject'], axis=1).values
