@@ -5,7 +5,7 @@ from sklearn.utils import resample
 from UniformSubsampling import UniformSubsampler
 import random
 
-class NaiveRandomForest:
+class RandomSubspacesMethod:
     def __init__(self, n_estimators=100, random_state=42, max_features='sqrt'):
         self.n_estimators = n_estimators
         self.random_state = random_state
@@ -17,23 +17,19 @@ class NaiveRandomForest:
 
 
     def fit(self, X, y):
-        n_samples, n_features = X.shape
+        _, n_features = X.shape
         if self.max_features == 'sqrt':
             n_features_to_use = int(np.sqrt(n_features))
         else:
             n_features_to_use = self.max_features  # or any other criteria
+        self.feature_indices = []
 
-        feature_sampler = UniformSubsampler(X)
-        self.feature_indices = feature_sampler.subsets_with_uniform_distribution(self.n_estimators, n_features_to_use)
-
-        for i in range(self.n_estimators):
-            # Bootstrap sample
-            sample_X, sample_y = resample(X, y)
-            # Train Decision Tree on sampled data with selected features
+        for _ in range(self.n_estimators):
             tree = DecisionTreeClassifier()
             selected_features = np.random.choice(range(n_features), n_features_to_use, replace=False)
-            tree.fit(sample_X[:, selected_features], sample_y)
+            tree.fit(X[:, selected_features], y)
             self.trees.append(tree)
+            self.feature_indices.append(selected_features)
 
 
     def predict(self, X):
